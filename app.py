@@ -78,3 +78,15 @@ default_gamma = float(product_df['Gamma'].iloc[0])
 alpha = st.sidebar.slider("Alpha (Level)", 0.0, 1.0, default_alpha)
 beta = st.sidebar.slider("Beta (Trend)", 0.0, 1.0, default_beta)
 gamma = st.sidebar.slider("Gamma (Season)", 0.0, 1.0, default_gamma)
+
+# 1. Clean up column names (removes hidden spaces like " Date ")
+df.columns = df.columns.str.strip()
+
+# 2. Convert to date, but turn "bad" data into 'NaT' (Not a Time) instead of crashing
+df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+
+# 3. Drop any rows that failed to convert (like empty rows at the end of the file)
+df = df.dropna(subset=[date_col])
+
+# 4. Sort by date (crucial for forecasting)
+df = df.sort_values(date_col)
