@@ -61,3 +61,20 @@ if uploaded_file:
         "Demand Class": ["Seasonal" if gamma > 0.1 else "Stable"]
     }
     st.table(pd.DataFrame(log_data))
+
+# Add a product selector
+product_list = df['Product_ID'].unique()
+selected_product = st.selectbox("Select Product to Forecast", product_list)
+
+# Filter data for just that product
+product_df = df[df['Product_ID'] == selected_product]
+
+# Automatically grab the Alpha/Beta/Gamma from the CSV!
+default_alpha = float(product_df['Alpha'].iloc[0])
+default_beta = float(product_df['Beta'].iloc[0])
+default_gamma = float(product_df['Gamma'].iloc[0])
+
+# Update sliders to use these defaults
+alpha = st.sidebar.slider("Alpha (Level)", 0.0, 1.0, default_alpha)
+beta = st.sidebar.slider("Beta (Trend)", 0.0, 1.0, default_beta)
+gamma = st.sidebar.slider("Gamma (Season)", 0.0, 1.0, default_gamma)
